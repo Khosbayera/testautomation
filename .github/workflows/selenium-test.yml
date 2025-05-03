@@ -1,0 +1,47 @@
+name: Selenium Test Pipeline
+
+on: [push, pull_request]
+
+jobs:
+  selenium-tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install Python dependencies
+        run: |
+          pip install -r requirements.txt
+          pip install selenium
+
+      - name: Run Selenium Tests
+        id: selenium_test
+        run: |
+          python run_selenium_tests.py
+        continue-on-error: true
+
+      - name: Upload screenshot if test fails
+        if: steps.selenium_test.outcome == 'failure'
+        uses: actions/upload-artifact@v4
+        with:
+          name: selenium-failure-screenshot
+          path: failure.png
+
+      - name: Notify Slack on Failure
+        if: steps.selenium_test.outcome == 'failure'
+        uses: rtCamp/action-slack-notify@v2
+        env:
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_COLOR: '#FF0000'
+          SLACK_MESSAGE: |
+            🚨 *Selenium Test Failed*
+            Repo: ${{ github.repository }}
+            Branch: ${{ github.ref_name }}
+            Author: ${{ github.actor }}
+            🔗 <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|View Logs>

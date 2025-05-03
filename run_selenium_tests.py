@@ -6,9 +6,8 @@ driver = webdriver.Chrome()
 
 try:
     driver.get("https://example.com")
-    
-    # ❌ Intentionally fail the test by asserting something incorrect
     assert "ThisWillNotBeInTheTitle" in driver.title
+    mongolian student
 
 except Exception as e:
     driver.save_screenshot("failure.png")

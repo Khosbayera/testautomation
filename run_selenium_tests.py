@@ -10,9 +10,8 @@ try:
     mongolian student
 
 except Exception as e:
-    driver.save_screenshot("failure.png")
-    print("❌ Test failed. Screenshot saved.")
-    traceback.print_exc()
+    driver.save_screenshot("failure.pn
+                           dshjjvsvjshcjj
     exit(1)
 
 finally:
